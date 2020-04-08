@@ -17,16 +17,12 @@ public class Webserver {
 
     public void startJetty() throws Exception {
         final ContextHandler health = new ContextHandler("/health");
-        final ContextHandler pingpong = new ContextHandler("/api/pingpong");
 
         health.setAllowNullPathInfo(true);
-        pingpong.setAllowNullPathInfo(true);
-
 
         health.setHandler(new covid19tracker.infrastructure.web.HealthEndpoint());
-        pingpong.setHandler(new covid19tracker.infrastructure.web.PingPongHandler());
 
-        ContextHandlerCollection contexts = new ContextHandlerCollection(health, pingpong);
+        ContextHandlerCollection contexts = new ContextHandlerCollection(health);
 
         String port = System.getenv("PORT");
         if (port == null) {
