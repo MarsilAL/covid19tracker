@@ -28,6 +28,9 @@ public class RegisterEndpoint extends AbstractHandler {
     if(request.getParameter("city") != null){
         city = request.getParameter("city");
     }
+
+    baseRequest.setHandled(true);
+    System.out.println("request the Register Endpoint");
     }
 
 }
