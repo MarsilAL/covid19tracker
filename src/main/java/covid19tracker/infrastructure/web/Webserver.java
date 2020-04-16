@@ -1,7 +1,7 @@
 package covid19tracker.infrastructure.web;
 
-import java.sql.Connection;
 
+import covid19tracker.business.RegisterService;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -9,10 +9,12 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
 public class Webserver {
 
-    private final Connection connection;
 
-    public Webserver(Connection connection) {
-        this.connection = connection;
+    private final RegisterService registerService;
+
+    public Webserver(RegisterService registerService) {
+
+        this.registerService = registerService;
     }
 
     public void startJetty() throws Exception {
@@ -23,7 +25,7 @@ public class Webserver {
         register.setAllowNullPathInfo(true);
 
         health.setHandler(new covid19tracker.infrastructure.web.HealthEndpoint());
-        register.setHandler(new covid19tracker.infrastructure.web.RegisterEndpoint());
+        register.setHandler(new covid19tracker.infrastructure.web.RegisterEndpoint(registerService));
 
         ContextHandlerCollection contexts = new ContextHandlerCollection(health, register);
 
