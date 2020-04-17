@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class databaseHandle {
+    String dbTable = System.getenv("DB_TABLE");
     private final Connection connection;
 
     public databaseHandle(Connection connection) {
@@ -19,9 +20,10 @@ public class databaseHandle {
 
     public boolean saveToDb(String uname, String hasCovid, Double latitude, Double longitude){
 
+
         try {
 
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO accounts(username, hascovid, latitude, longitude) VALUES (?, ?, ?, ?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO "+dbTable+"(username, hascovid, latitude, longitude) VALUES (?, ?, ?, ?)");
             preparedStatement.setString(1, uname);
             preparedStatement.setString(2, hasCovid);
             preparedStatement.setDouble(3, latitude);
@@ -39,7 +41,7 @@ public class databaseHandle {
     public boolean chkUser(String username){
         try {
 
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM accounts WHERE username = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM "+dbTable+" WHERE username = ?");
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()){

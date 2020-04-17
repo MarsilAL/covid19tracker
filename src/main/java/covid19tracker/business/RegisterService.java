@@ -13,6 +13,7 @@ public class RegisterService {
     public User registerUser(String username, String hasCovid, Double latitude, Double longitude) {
         //  User user = new User (username, hasCovid, latitude, longitude);
         while (databaseHandle.chkUser(username)) {
+
             System.out.println("try another username" + username);
         }
         if (!databaseHandle.saveToDb(username, hasCovid, latitude, longitude)) {

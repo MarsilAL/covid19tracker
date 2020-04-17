@@ -4,7 +4,7 @@
 package covid19tracker;
 
 import covid19tracker.business.RegisterService;
-import covid19tracker.infrastracture.db.PostgresClient;
+import covid19tracker.infrastructure.db.PostgresClient;
 import covid19tracker.infrastructure.db.databaseHandle;
 import covid19tracker.infrastructure.web.Webserver;
 
