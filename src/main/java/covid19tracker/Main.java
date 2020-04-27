@@ -37,9 +37,9 @@ public class Main {
             System.out.println("connected:" + new Date());
         }
         databaseHandle databaseHandle = new databaseHandle(connection);
-        RegisterService registerService = new RegisterService(databaseHandle);
+        RegisterService usersService = new RegisterService(databaseHandle);
 
-        Webserver webserver = new Webserver(registerService);
+        Webserver webserver = new Webserver(usersService);
         webserver.startJetty();
 
     }

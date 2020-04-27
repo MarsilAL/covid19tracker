@@ -10,11 +10,11 @@ public class RegisterService {
         this.databaseHandle = databaseHandle;
     }
 
-    public User registerUser(String username, String hasCovid, Double latitude, Double longitude) {
+    public User registerUser(String username, boolean hasCovid, Double latitude, Double longitude) {
         //  User user = new User (username, hasCovid, latitude, longitude);
-        while (databaseHandle.chkUser(username)) {
-
-            System.out.println("try another username" + username);
+        if (databaseHandle.userExists(username)) {
+            System.out.println("try another username " + username);
+            return null;
         }
         if (!databaseHandle.saveToDb(username, hasCovid, latitude, longitude)) {
             return null;

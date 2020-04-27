@@ -18,14 +18,15 @@ public class databaseHandle {
         return this.saveToDb(user.getUname(), user.getStatus(), user.getLatitude(), user.getLongitude());
     }
 
-    public boolean saveToDb(String uname, String hasCovid, Double latitude, Double longitude){
+    public boolean saveToDb(String uname, boolean hasCovid, Double latitude, Double longitude){
 
 
         try {
+            String statusAsStr = hasCovid ? "true" : "false";
 
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO "+dbTable+"(username, hascovid, latitude, longitude) VALUES (?, ?, ?, ?)");
             preparedStatement.setString(1, uname);
-            preparedStatement.setString(2, hasCovid);
+            preparedStatement.setString(2, statusAsStr);
             preparedStatement.setDouble(3, latitude);
             preparedStatement.setDouble(4, longitude);
             preparedStatement.executeUpdate();
@@ -38,7 +39,7 @@ public class databaseHandle {
         }
     }
 
-    public boolean chkUser(String username){
+    public boolean userExists(String username){
         try {
 
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM "+dbTable+" WHERE username = ?");

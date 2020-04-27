@@ -23,6 +23,7 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation("com.google.guava:guava:28.0-jre")
+
     implementation("org.postgresql:postgresql:42.2.10")
     implementation("org.eclipse.jetty:jetty-server:9.4.26.v20200117")
     implementation("org.eclipse.jetty:jetty-util-ajax:9.4.27.v20200227")
@@ -30,6 +31,7 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation("junit:junit:4.12")
+    testCompile("org.mockito:mockito-core:3.3.3")
 }
 
 application {

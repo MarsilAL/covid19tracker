@@ -2,11 +2,11 @@ package covid19tracker.domain;
 
 public class User {
     final private String username;
-    final private String hascovid;
+    final private boolean hascovid;
     final private Double  latitude;
     final private Double longitude;
 
-    public User(String username, String hascovid, Double latitude, Double longitude) {
+    public User(String username, boolean hascovid, Double latitude, Double longitude) {
         this.username = username;
         this.hascovid = hascovid;
         this.latitude = latitude;
@@ -17,7 +17,7 @@ public class User {
         return username;
     }
 
-    public String getStatus(){
+    public boolean getStatus(){
         return hascovid;
     }
 
