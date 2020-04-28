@@ -6,6 +6,7 @@ package covid19tracker;
 import covid19tracker.business.RegisterService;
 import covid19tracker.infrastructure.db.PostgresClient;
 import covid19tracker.infrastructure.db.databaseHandle;
+import covid19tracker.infrastructure.web.CorsHandler;
 import covid19tracker.infrastructure.web.Webserver;
 
 import java.sql.Connection;
@@ -37,9 +38,10 @@ public class Main {
             System.out.println("connected:" + new Date());
         }
         databaseHandle databaseHandle = new databaseHandle(connection);
-        RegisterService usersService = new RegisterService(databaseHandle);
+        RegisterService registerService = new RegisterService(databaseHandle);
+        CorsHandler corsHandler = new CorsHandler();
 
-        Webserver webserver = new Webserver(usersService);
+        Webserver webserver = new Webserver(registerService, corsHandler);
         webserver.startJetty();
 
     }

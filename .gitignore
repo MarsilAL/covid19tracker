@@ -5,3 +5,5 @@
 # Ignore Gradle build output directory
 build
 run.sh
+start.sh
+env-local.sh

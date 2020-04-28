@@ -14,93 +14,104 @@ import java.io.IOException;
 
 import covid19tracker.domain.User;
 
-
 public class RegisterEndpoint extends AbstractHandler {
 
     final private RegisterService registerService;
+    final private CorsHandler corsHandler;
 
-    public RegisterEndpoint(RegisterService registerService) {
+    public RegisterEndpoint(RegisterService registerService, CorsHandler corsHandler) {
         this.registerService = registerService;
+        this.corsHandler = corsHandler;
     }
 
     @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        System.out.println("processing request ... ");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "*");
-        if (request.getRemoteHost().equals("null")) {
-            response.setHeader("Access-Control-Allow-Origin", "null");
-        }
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("processing register request ...");
+
         baseRequest.setHandled(true);
+        corsHandler.handleCors(request, response);
 
-
-        /*
-
-        to test the endpoint use curl ...
-        curl --header "Content-Type: application/json"   --request POST   --data '{"username":"xyz","hasCovid":true, "latitude":0, "longitude":0}'   http://localhost:8080/register
-
-
-        **/
-
-        // onlz allow post requests
-        if (!request.getMethod().equals("POST")) {
-            response.setStatus(405);
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(200);
             return;
         }
 
-        // get data from request
-        StringBuilder data = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            data.append(line);
-        }
+        if ("POST".equalsIgnoreCase(request.getMethod())) {
+            // get data from request
+            StringBuilder data = new StringBuilder();
+            BufferedReader reader = request.getReader();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                data.append(line);
+            }
 
-        String username;
-        boolean hasCovid;
-        Double latitude;
-        Double longitude;
+            /*
 
-        // parse as json
-        try {
-            System.out.println("parsed data from request");
-            JSONObject object = new JSONObject(data.toString());
-            username = object.getString("username");
-            hasCovid = object.getBoolean("hasCovid");
-            latitude = object.getDouble("latitude");
-            longitude = object.getDouble("longitude");
-        } catch (JSONException ex) {
-            System.out.println("missing field in json object or not parsable" + ex);
-            response.setStatus(400);
-            return;
-        }
+             password und db ändern
 
-        if (username.isEmpty()) {
-            System.out.println("invalid request, username must not be empty");
-            response.setStatus(400);
-            return;
-        }
+            2 endpunkte .. löschen und status ändern
 
-        User user = registerService.registerUser(username, hasCovid, latitude, longitude);
+*/
 
-        // creation suceess!! tell the caller about the created user as json
-        if (user != null) {
+            String username;
+            String password; // used for http basic auth
+            boolean hasCovid;
+            Double latitude;
+            Double longitude;
 
-            System.out.println("created user !");
+            // parse as json
+            try {
+                System.out.println("parsed data from request");
+                JSONObject object = new JSONObject(data.toString());
+                username = object.getString("username");
+                hasCovid = object.getBoolean("hasCovid");
+                latitude = object.getDouble("latitude");
+                longitude = object.getDouble("longitude");
+                password = object.getString("psw");
+            } catch (JSONException ex) {
+                System.out.println("missing field in json object or not parsable" + ex);
+                response.setStatus(400);
+                return;
+            }
 
-            JSONObject userJson = new JSONObject();
-            userJson.put("username", username);
-            userJson.put("hasCovid", hasCovid);
-            userJson.put("latitude", latitude);
-            userJson.put("longitude", longitude);
+            if (username.isEmpty()) {
+                System.out.println("invalid request, username must not be empty");
+                response.setStatus(400);
+                return;
+            }
 
-            response.getWriter().print(userJson);
+            User user = registerService.registerUser(username, hasCovid, latitude, longitude);
+
+            // creation suceess!! tell the caller about the created user as json
+            if (user != null) {
+
+                System.out.println("created user !");
+
+                JSONObject userJson = new JSONObject();
+                userJson.put("username", username);
+                userJson.put("hasCovid", hasCovid);
+                userJson.put("latitude", latitude);
+                userJson.put("longitude", longitude);
+
+                response.getWriter().print(userJson);
+            } else {
+                // todo
+                // else retrun 400
+                System.out.println("jjj falsch");
+
+            }
+
+
+
         } else {
-            // todo
-            // else retrun 400
-            System.out.println("jjj falsch");
-
+            response.setStatus(405);
         }
     }
+    /*
+    private IrgendeinUserObject deserializeUser()
 
+    private JSONObject serialiyeUser(User user) {
+        return null // TODO
+    }
+    */
 }

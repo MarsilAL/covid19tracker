@@ -11,10 +11,12 @@ public class Webserver {
 
 
     private final RegisterService registerService;
+    private final CorsHandler corsHandler;
 
-    public Webserver(RegisterService registerService) {
+    public Webserver(RegisterService registerService, CorsHandler corsHandler) {
 
         this.registerService = registerService;
+        this.corsHandler = corsHandler;
     }
 
     public void startJetty() throws Exception {
@@ -25,7 +27,7 @@ public class Webserver {
         register.setAllowNullPathInfo(true);
 
         health.setHandler(new covid19tracker.infrastructure.web.HealthEndpoint());
-        register.setHandler(new covid19tracker.infrastructure.web.RegisterEndpoint(registerService));
+        register.setHandler(new covid19tracker.infrastructure.web.RegisterEndpoint(registerService, corsHandler));
 
         ContextHandlerCollection contexts = new ContextHandlerCollection(health, register);
 
