@@ -54,7 +54,7 @@ public class RegisterEndpoint extends AbstractHandler {
 */
 
             String username;
-            String password; // used for http basic auth
+            String pswC; // used for http basic auth
             boolean hasCovid;
             Double latitude;
             Double longitude;
@@ -67,7 +67,8 @@ public class RegisterEndpoint extends AbstractHandler {
                 hasCovid = object.getBoolean("hasCovid");
                 latitude = object.getDouble("latitude");
                 longitude = object.getDouble("longitude");
-                password = object.getString("psw");
+                pswC = object.getString("pswC");
+
             } catch (JSONException ex) {
                 System.out.println("missing field in json object or not parsable" + ex);
                 response.setStatus(400);
@@ -79,8 +80,13 @@ public class RegisterEndpoint extends AbstractHandler {
                 response.setStatus(400);
                 return;
             }
+            if (pswC.isEmpty()) {
+                System.out.println("invalid request, password must not be empty");
+                response.setStatus(400);
+                return;
+            }
 
-            User user = registerService.registerUser(username, hasCovid, latitude, longitude);
+            User user = registerService.registerUser(username, hasCovid, latitude, longitude, pswC);
 
             // creation suceess!! tell the caller about the created user as json
             if (user != null) {
@@ -92,12 +98,13 @@ public class RegisterEndpoint extends AbstractHandler {
                 userJson.put("hasCovid", hasCovid);
                 userJson.put("latitude", latitude);
                 userJson.put("longitude", longitude);
+                userJson.put("paswoerd", pswC);
 
                 response.getWriter().print(userJson);
             } else {
                 // todo
                 // else retrun 400
-                System.out.println("jjj falsch");
+                System.out.println(" falsch");
 
             }
 

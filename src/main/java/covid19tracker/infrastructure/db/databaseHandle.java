@@ -15,20 +15,21 @@ public class databaseHandle {
     }
 
     public boolean saveToDb(User user) {
-        return this.saveToDb(user.getUname(), user.getStatus(), user.getLatitude(), user.getLongitude());
+        return this.saveToDb(user.getUname(), user.getStatus(), user.getLatitude(), user.getLongitude(), user.getPswC());
     }
 
-    public boolean saveToDb(String uname, boolean hasCovid, Double latitude, Double longitude){
+    public boolean saveToDb(String uname, boolean hasCovid, Double latitude, Double longitude, String pswC){
 
 
         try {
             String statusAsStr = hasCovid ? "true" : "false";
 
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO "+dbTable+"(username, hascovid, latitude, longitude) VALUES (?, ?, ?, ?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO "+dbTable+"(username, hascovid, latitude, longitude, pswC) VALUES (?, ?, ?, ?, ?)");
             preparedStatement.setString(1, uname);
             preparedStatement.setString(2, statusAsStr);
             preparedStatement.setDouble(3, latitude);
             preparedStatement.setDouble(4, longitude);
+            preparedStatement.setString(5, pswC);
             preparedStatement.executeUpdate();
             return true;
 
