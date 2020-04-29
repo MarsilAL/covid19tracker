@@ -36,14 +36,19 @@ public class RegisterEndpoint extends AbstractHandler {
             return;
         }
 
-        if ("POST".equalsIgnoreCase(request.getMethod())) {
-            // get data from request
-            StringBuilder data = new StringBuilder();
-            BufferedReader reader = request.getReader();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                data.append(line);
-            }
+        if (!"POST".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(405);
+            return;
+        }
+
+
+        // get data from request
+        StringBuilder data = new StringBuilder();
+        BufferedReader reader = request.getReader();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            data.append(line);
+        }
 
             /*
 
@@ -53,66 +58,62 @@ public class RegisterEndpoint extends AbstractHandler {
 
 */
 
-            String username;
-            String pswC; // used for http basic auth
-            boolean hasCovid;
-            Double latitude;
-            Double longitude;
+        String username;
+        String pswC; // used for http basic auth
+        boolean hasCovid;
+        Double latitude;
+        Double longitude;
 
-            // parse as json
-            try {
-                System.out.println("parsed data from request");
-                JSONObject object = new JSONObject(data.toString());
-                username = object.getString("username");
-                hasCovid = object.getBoolean("hasCovid");
-                latitude = object.getDouble("latitude");
-                longitude = object.getDouble("longitude");
-                pswC = object.getString("pswC");
+        // parse as json
+        try {
+            System.out.println("parsed data from request");
+            JSONObject object = new JSONObject(data.toString());
+            username = object.getString("username");
+            hasCovid = object.getBoolean("hasCovid");
+            latitude = object.getDouble("latitude");
+            longitude = object.getDouble("longitude");
+            pswC = object.getString("pswC");
 
-            } catch (JSONException ex) {
-                System.out.println("missing field in json object or not parsable" + ex);
-                response.setStatus(400);
-                return;
-            }
-
-            if (username.isEmpty()) {
-                System.out.println("invalid request, username must not be empty");
-                response.setStatus(400);
-                return;
-            }
-            if (pswC.isEmpty()) {
-                System.out.println("invalid request, password must not be empty");
-                response.setStatus(400);
-                return;
-            }
-
-            User user = registerService.registerUser(username, hasCovid, latitude, longitude, pswC);
-
-            // creation suceess!! tell the caller about the created user as json
-            if (user != null) {
-
-                System.out.println("created user !");
-
-                JSONObject userJson = new JSONObject();
-                userJson.put("username", username);
-                userJson.put("hasCovid", hasCovid);
-                userJson.put("latitude", latitude);
-                userJson.put("longitude", longitude);
-                userJson.put("paswoerd", pswC);
-
-                response.getWriter().print(userJson);
-            } else {
-                // todo
-                // else retrun 400
-                System.out.println(" falsch");
-
-            }
-
-
-
-        } else {
-            response.setStatus(405);
+        } catch (JSONException ex) {
+            System.out.println("missing field in json object or not parsable" + ex);
+            response.setStatus(400);
+            return;
         }
+
+        if (username.isEmpty()) {
+            System.out.println("invalid request, username must not be empty");
+            response.setStatus(400);
+            return;
+        }
+        if (pswC.isEmpty()) {
+            System.out.println("invalid request, password must not be empty");
+            response.setStatus(400);
+            return;
+        }
+
+        User user = registerService.registerUser(username, hasCovid, latitude, longitude, pswC);
+
+        // creation suceess!! tell the caller about the created user as json
+        if (user != null) {
+
+            System.out.println("created user !");
+
+            JSONObject userJson = new JSONObject();
+            userJson.put("username", username);
+            userJson.put("hasCovid", hasCovid);
+            userJson.put("latitude", latitude);
+            userJson.put("longitude", longitude);
+            userJson.put("paswoerd", pswC);
+
+            response.getWriter().print(userJson);
+        } else {
+            // todo
+            // else retrun 400
+            System.out.println(" falsch");
+
+        }
+
+
     }
     /*
     private IrgendeinUserObject deserializeUser()

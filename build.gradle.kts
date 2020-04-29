@@ -31,7 +31,7 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation("junit:junit:4.12")
-    testCompile("org.mockito:mockito-core:3.3.3")
+    testImplementation ("org.mockito:mockito-core:2.7.22")
 }
 
 application {
