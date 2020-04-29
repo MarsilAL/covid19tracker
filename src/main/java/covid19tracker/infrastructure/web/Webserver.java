@@ -22,14 +22,18 @@ public class Webserver {
     public void startJetty() throws Exception {
         final ContextHandler health = new ContextHandler("/health");
         final ContextHandler register = new ContextHandler("/register");
+        final ContextHandler sighting = new ContextHandler("/sighting");
 
         health.setAllowNullPathInfo(true);
         register.setAllowNullPathInfo(true);
+        sighting.setAllowNullPathInfo(true);
 
         health.setHandler(new covid19tracker.infrastructure.web.HealthEndpoint());
         register.setHandler(new covid19tracker.infrastructure.web.RegisterEndpoint(registerService, corsHandler));
 
-        ContextHandlerCollection contexts = new ContextHandlerCollection(health, register);
+        sighting.setHandler(new covid19tracker.infrastructure.web.SightingEndpoint(corsHandler));
+
+        ContextHandlerCollection contexts = new ContextHandlerCollection(health, register, sighting);
 
         String port = System.getenv("PORT");
         if (port == null) {
