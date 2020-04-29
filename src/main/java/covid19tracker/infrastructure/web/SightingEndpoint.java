@@ -34,13 +34,14 @@ public class SightingEndpoint extends AbstractHandler {
             response.setStatus(200);
             return;
         }
-
+/*
         if (!"POST".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(405);
             return;
         }
+*/
 
-
+/*
         // get data from request
         StringBuilder data = new StringBuilder();
         BufferedReader reader = request.getReader();
@@ -48,12 +49,9 @@ public class SightingEndpoint extends AbstractHandler {
         while ((line = reader.readLine()) != null) {
             data.append(line);
         }
-
-
         String username;
         Double latitude;
         Double longitude;
-
         // parse as json
         try {
             System.out.println("parsed data from request");
@@ -61,12 +59,29 @@ public class SightingEndpoint extends AbstractHandler {
             username = object.getString("username");
             latitude = object.getDouble("latitude");
             longitude = object.getDouble("longitude");
-
+            System.out.println("- u  " + username);
+            System.out.println("- X  " + latitude);
+            System.out.println("- Y  " + longitude);
         } catch (JSONException ex) {
             System.out.println("missing field in json object or not parsable" + ex);
             response.setStatus(400);
             return;
         }
+*/
+        String username = null;
+        Double latitude = null;
+        Double longitude = null;
+
+        if (request.getParameter("username") != null) {
+            username = request.getParameter("username");
+        }
+        if (request.getParameter("latitude") != null) {
+            latitude = Double.parseDouble(request.getParameter("latitude"));
+        }
+        if (request.getParameter("longitude") != null) {
+            longitude = Double.parseDouble(request.getParameter("longitude"));
+        }
+
 
         if (username.isEmpty()) {
             System.out.println("invalid request, username must not be empty");
@@ -76,6 +91,7 @@ public class SightingEndpoint extends AbstractHandler {
         Date date = new Date();
 
         System.out.println(date);
+
         System.out.println(username);
         System.out.println(latitude);
         System.out.println(longitude);
