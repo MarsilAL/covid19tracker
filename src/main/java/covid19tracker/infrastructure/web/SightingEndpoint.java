@@ -1,8 +1,7 @@
 package covid19tracker.infrastructure.web;
-
+import covid19tracker.infrastructure.db.SightingRepo;
 
 import covid19tracker.domain.Sighting;
-import covid19tracker.domain.User;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.json.JSONException;
@@ -17,15 +16,17 @@ import java.util.Date;
 
 public class SightingEndpoint extends AbstractHandler {
 
-    private final CorsHandler corsHandler;
+    final private CorsHandler corsHandler;
+    private final SightingRepo sightingRepo;
 
-    public SightingEndpoint(CorsHandler corsHandler){
+    public SightingEndpoint(CorsHandler corsHandler, SightingRepo sightingRepo) {
         this.corsHandler = corsHandler;
+        this.sightingRepo = sightingRepo;
     }
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("processing register request ...");
+        System.out.println("processing sighting request ...");
 
         baseRequest.setHandled(true);
         corsHandler.handleCors(request, response);
@@ -34,14 +35,12 @@ public class SightingEndpoint extends AbstractHandler {
             response.setStatus(200);
             return;
         }
-/*
+
         if (!"POST".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(405);
             return;
         }
-*/
 
-/*
         // get data from request
         StringBuilder data = new StringBuilder();
         BufferedReader reader = request.getReader();
@@ -49,9 +48,19 @@ public class SightingEndpoint extends AbstractHandler {
         while ((line = reader.readLine()) != null) {
             data.append(line);
         }
+/*
+1
+Insomnia installieren und post request mit json gegen sighting endpoint absetzen
+2
+insert statt update im repo
+
+
+
+ */
         String username;
         Double latitude;
         Double longitude;
+        System.out.println(data.toString());
         // parse as json
         try {
             System.out.println("parsed data from request");
@@ -59,56 +68,38 @@ public class SightingEndpoint extends AbstractHandler {
             username = object.getString("username");
             latitude = object.getDouble("latitude");
             longitude = object.getDouble("longitude");
-            System.out.println("- u  " + username);
-            System.out.println("- X  " + latitude);
-            System.out.println("- Y  " + longitude);
         } catch (JSONException ex) {
-            System.out.println("missing field in json object or not parsable" + ex);
+            System.err.println("missing field in json object or not parsable" + ex);
+            ex.printStackTrace();
             response.setStatus(400);
             return;
         }
-*/
-        String username = null;
-        Double latitude = null;
-        Double longitude = null;
-
-        if (request.getParameter("username") != null) {
-            username = request.getParameter("username");
-        }
-        if (request.getParameter("latitude") != null) {
-            latitude = Double.parseDouble(request.getParameter("latitude"));
-        }
-        if (request.getParameter("longitude") != null) {
-            longitude = Double.parseDouble(request.getParameter("longitude"));
-        }
-
 
         if (username.isEmpty()) {
-            System.out.println("invalid request, username must not be empty");
+            System.err.println("invalid request, username must not be empty");
             response.setStatus(400);
             return;
         }
-        Date date = new Date();
 
-        System.out.println(date);
+        Date instant = new Date();
+        Sighting sighting = new Sighting(latitude, longitude, instant);
 
-        System.out.println(username);
-        System.out.println(latitude);
-        System.out.println(longitude);
-
-        Sighting sighting = new Sighting(latitude, longitude, date);
+        if (username != null && latitude != null && longitude != null) {
+            sightingRepo.saveTheSighting(username, sighting);
+            response.setStatus(204);
+        } else {
+            response.setStatus(400);
+            return;
+        }
         // creation suceess!! tell the caller about the created user as json
         if (sighting != null) {
 
-            System.out.println("created user !");
+            System.out.println("SightingEndpoint working ..");
 
             JSONObject userJson = new JSONObject();
             userJson.put("username", username);
-
             userJson.put("latitude", latitude);
             userJson.put("longitude", longitude);
-            userJson.put("Date ", date);
-
 
             response.getWriter().print(userJson);
         } else {
@@ -119,4 +110,5 @@ public class SightingEndpoint extends AbstractHandler {
 
 
     }
+
 }

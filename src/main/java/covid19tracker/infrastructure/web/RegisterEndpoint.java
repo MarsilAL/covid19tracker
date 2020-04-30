@@ -96,7 +96,7 @@ public class RegisterEndpoint extends AbstractHandler {
         // creation suceess!! tell the caller about the created user as json
         if (user != null) {
 
-            System.out.println("SightingEndpoint worcking ..");
+            System.out.println("SightingEndpoint working ..");
 
             JSONObject userJson = new JSONObject();
             userJson.put("username", username);

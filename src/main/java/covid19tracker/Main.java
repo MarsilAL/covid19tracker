@@ -8,6 +8,7 @@ import covid19tracker.infrastructure.db.PostgresClient;
 import covid19tracker.infrastructure.db.databaseHandle;
 import covid19tracker.infrastructure.web.CorsHandler;
 import covid19tracker.infrastructure.web.Webserver;
+import covid19tracker.infrastructure.db.SightingRepo;
 
 import java.sql.Connection;
 import java.util.Date;
@@ -40,8 +41,9 @@ public class Main {
         databaseHandle databaseHandle = new databaseHandle(connection);
         RegisterService registerService = new RegisterService(databaseHandle);
         CorsHandler corsHandler = new CorsHandler();
+        SightingRepo sightingRepo = new SightingRepo(connection);
 
-        Webserver webserver = new Webserver(registerService, corsHandler);
+        Webserver webserver = new Webserver(registerService, corsHandler, sightingRepo);
         webserver.startJetty();
 
     }

@@ -10,9 +10,9 @@ public class Sighting {
     private Date instant;
 
 
-    public Sighting(double latitude, double longitude, Date date) {
+    public Sighting(double latitude, double longitude, Date instant) {
 
-        this.instant = date;
+        this.instant = instant;
         this.latitude = latitude;
         this.longitude = longitude;
     }
