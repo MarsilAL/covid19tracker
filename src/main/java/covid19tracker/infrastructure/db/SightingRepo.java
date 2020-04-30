@@ -11,10 +11,12 @@ import java.util.Date;
 import java.util.List;
 
 public class SightingRepo {
-    String dbTable = System.getenv("DB_TABLE");
+
     private Connection connection;
 
     public SightingRepo(Connection connection){
+
+        this.connection = connection;
 
     }
 
@@ -36,8 +38,7 @@ public class SightingRepo {
             System.out.println(sighting.getLatitude());
             System.out.println(sighting.getLongitude());
             System.out.println(username);
-            System.out.println(dbTable);
-            System.exit(0);
+
         }
     }
 }
