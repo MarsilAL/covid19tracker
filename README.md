@@ -35,3 +35,11 @@ Observability is a quality of the app or technology you are using that grants an
 
 Monitoring will tell me if the tracker is working or not. (Ex: Problem in Trecker setup ).
 Observability tell us about the details of the failure, what it is, where it is, and how it happened.(Ex: The registration data is incomplete, an error in getting the geographical location, an error in creating the user, an error in the request).
+
+____
+- Here is a controversial opinion: https://lemire.me/blog/2016/06/21/i-do-not-use-a-debugger/ Do you agree?
+
+I understand from  the topic, we always have to use better tools than the debugger to develop more complex programs.
+the debugger is not always the first best option.
+
+Personally, I think we should learn a lot and try a lot before saying a personal opinion on this topic.
