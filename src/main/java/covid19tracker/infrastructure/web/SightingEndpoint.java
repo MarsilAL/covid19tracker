@@ -1,4 +1,5 @@
 package covid19tracker.infrastructure.web;
+import covid19tracker.Log;
 import covid19tracker.infrastructure.db.SightingRepo;
 
 import covid19tracker.domain.Sighting;
@@ -19,15 +20,15 @@ public class SightingEndpoint extends AbstractHandler {
     final private CorsHandler corsHandler;
     private final SightingRepo sightingRepo;
 
-    public SightingEndpoint(CorsHandler corsHandler, SightingRepo sightingRepo) {
+    public SightingEndpoint(CorsHandler corsHandler, SightingRepo sightingRepo) throws IOException {
         this.corsHandler = corsHandler;
         this.sightingRepo = sightingRepo;
     }
+    Log my_log = new Log("log.txt");
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("processing sighting request ...");
-
+        my_log.logger.info("processing sighting request ...");
         baseRequest.setHandled(true);
         corsHandler.handleCors(request, response);
 
@@ -48,15 +49,7 @@ public class SightingEndpoint extends AbstractHandler {
         while ((line = reader.readLine()) != null) {
             data.append(line);
         }
-/*
-1
-Insomnia installieren und post request mit json gegen sighting endpoint absetzen
-2
-insert statt update im repo
 
-
-
- */
         String username;
         Double latitude;
         Double longitude;
@@ -70,13 +63,14 @@ insert statt update im repo
             longitude = object.getDouble("longitude");
         } catch (JSONException ex) {
             System.err.println("missing field in json object or not parsable" + ex);
+            my_log.logger.warning("parsable" + ex);
             ex.printStackTrace();
             response.setStatus(400);
             return;
         }
 
         if (username.isEmpty()) {
-            System.err.println("invalid request, username must not be empty");
+            my_log.logger.warning("invalid request, username must not be empty");
             response.setStatus(400);
             return;
         }
@@ -94,7 +88,7 @@ insert statt update im repo
         // creation suceess!! tell the caller about the created user as json
         if (sighting != null) {
 
-            System.out.println("SightingEndpoint working ..");
+            my_log.logger.fine("SightingEndpoint working, save new data");
 
             JSONObject userJson = new JSONObject();
             userJson.put("username", username);
@@ -103,9 +97,7 @@ insert statt update im repo
 
             response.getWriter().print(userJson);
         } else {
-
-            System.out.println(" falsch");
-
+            my_log.logger.warning("something is wrong");
         }
 
 

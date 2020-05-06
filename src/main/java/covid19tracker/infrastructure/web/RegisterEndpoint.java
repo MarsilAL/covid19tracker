@@ -1,5 +1,6 @@
 package covid19tracker.infrastructure.web;
 
+import covid19tracker.Log;
 import covid19tracker.business.RegisterService;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -26,7 +27,8 @@ public class RegisterEndpoint extends AbstractHandler {
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("processing register request ...");
+        Log my_log = new Log("log.txt");
+        my_log.logger.info("processing register request ...");
 
         baseRequest.setHandled(true);
         corsHandler.handleCors(request, response);
@@ -50,14 +52,6 @@ public class RegisterEndpoint extends AbstractHandler {
             data.append(line);
         }
 
-            /*
-
-             password und db ändern
-
-            2 endpunkte .. löschen und status ändern
-
-*/
-
         String username;
         String pswC; // used for http basic auth
         boolean hasCovid;
@@ -66,7 +60,7 @@ public class RegisterEndpoint extends AbstractHandler {
 
         // parse as json
         try {
-            System.out.println("parsed data from request");
+            my_log.logger.info("parsed data from request");
             JSONObject object = new JSONObject(data.toString());
             username = object.getString("username");
             hasCovid = object.getBoolean("hasCovid");
@@ -75,13 +69,13 @@ public class RegisterEndpoint extends AbstractHandler {
             pswC = object.getString("pswC");
 
         } catch (JSONException ex) {
-            System.out.println("missing field in json object or not parsable" + ex);
+            my_log.logger.warning("missing field in json object or not parsable" + ex);
             response.setStatus(400);
             return;
         }
 
         if (username.isEmpty()) {
-            System.out.println("invalid request, username must not be empty");
+            my_log.logger.warning("invalid request, username must not be empty");
             response.setStatus(400);
             return;
         }
