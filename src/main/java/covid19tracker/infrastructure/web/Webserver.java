@@ -26,17 +26,22 @@ public class Webserver {
         final ContextHandler health = new ContextHandler("/health");
         final ContextHandler register = new ContextHandler("/register");
         final ContextHandler sighting = new ContextHandler("/sighting");
+        final ContextHandler login = new ContextHandler("/login");
 
         health.setAllowNullPathInfo(true);
         register.setAllowNullPathInfo(true);
         sighting.setAllowNullPathInfo(true);
+        login.setAllowNullPathInfo(true);
 
         health.setHandler(new covid19tracker.infrastructure.web.HealthEndpoint());
+
         register.setHandler(new covid19tracker.infrastructure.web.RegisterEndpoint(userService, corsHandler));
 
-        sighting.setHandler(new covid19tracker.infrastructure.web.SightingEndpoint(corsHandler, sightingRepo));
+        sighting.setHandler(new covid19tracker.infrastructure.web.SightingEndpoint(corsHandler, sightingRepo, userService));
 
-        ContextHandlerCollection contexts = new ContextHandlerCollection(health, register, sighting);
+        login.setHandler(new covid19tracker.infrastructure.web.LoginEndpoint(corsHandler, userService));
+
+        ContextHandlerCollection contexts = new ContextHandlerCollection(health, register, sighting, login);
 
         String port = System.getenv("PORT");
         if (port == null) {

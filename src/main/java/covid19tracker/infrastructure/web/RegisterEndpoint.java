@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import covid19tracker.domain.User;
 
@@ -84,7 +85,12 @@ public class RegisterEndpoint extends AbstractHandler {
             return;
         }
 
-        User user = userService.registerUser(username, hasCovid, latitude, longitude, pswC);
+        User user = null;
+        try {
+            user = userService.registerUser(username, hasCovid, latitude, longitude, pswC);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
 
         // creation suceess!! tell the caller about the created user as json
         if (user != null) {

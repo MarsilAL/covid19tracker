@@ -4,6 +4,7 @@
 package covid19tracker;
 
 import covid19tracker.business.UserService;
+import covid19tracker.infrastructure.Hashing;
 import covid19tracker.infrastructure.db.PostgresClient;
 import covid19tracker.infrastructure.db.DatabaseHandle;
 import covid19tracker.infrastructure.web.CorsHandler;
@@ -32,6 +33,7 @@ public class Main {
 
         // connect to db
         Connection connection = PostgresClient.connect(dbHost, dbUser, dbPass, dbName);
+        Hashing hashing = new Hashing();
         ;
         if (connection == null) {
             my_log.logger.config("failed to connect to Database");
@@ -40,7 +42,7 @@ public class Main {
         } else {
             my_log.logger.info("connected");
         }
-        DatabaseHandle databaseHandle = new DatabaseHandle(connection);
+        DatabaseHandle databaseHandle = new DatabaseHandle(connection, hashing);
         UserService userService = new UserService(databaseHandle);
         CorsHandler corsHandler = new CorsHandler();
         SightingRepo sightingRepo = new SightingRepo(connection);

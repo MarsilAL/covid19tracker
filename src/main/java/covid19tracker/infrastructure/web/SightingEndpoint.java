@@ -48,9 +48,9 @@ public class SightingEndpoint extends AbstractHandler {
 
         // validate user
         // TODO use correct header
-        if (!this.validateUser(request.getHeader("which header??"))) {
+        if (!this.validateUser(request.getHeader("Authorization"))) {
             // TODO which status to send?
-            response.setStatus(418);
+            response.setStatus(401);
             return;
         }
 
@@ -115,16 +115,29 @@ public class SightingEndpoint extends AbstractHandler {
 
     private boolean validateUser(String header) {
         // TODO quick check before doing a database query
+        if (header != null) {
+            String auth = header;
+            String coded_user_password = auth.split(" ")[1];
 
+            //String decoded_user_password = StringUtils.newStringUtf8(Base64.decodeBase64(coded_user_password));
+            String decoded = new String(Base64.getDecoder().decode(coded_user_password));
+
+            String username = decoded.split(":")[0];
+            String password = decoded.split(":")[1];
+
+            System.out.println("uname:  " + username + " pass:  " + password);
+        }
         // TODO decode http header
-        String decoded = new String(Base64.getDecoder().decode("SGFsbG86TWFyc2ls"));
+
 
         // TODO more magic regarding the http header
-
+        /*
         String user = "foo";
         String password = "bar";
 
         return this.userService.validateUser(user, password);
-    }
 
+         */
+        return true;
+    }
 }
