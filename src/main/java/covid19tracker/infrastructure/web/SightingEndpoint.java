@@ -1,5 +1,6 @@
 package covid19tracker.infrastructure.web;
 import covid19tracker.Log;
+import covid19tracker.business.UserService;
 import covid19tracker.infrastructure.db.SightingRepo;
 
 import covid19tracker.domain.Sighting;
@@ -12,19 +13,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Date;
 
 
 public class SightingEndpoint extends AbstractHandler {
 
-    final private CorsHandler corsHandler;
+    private final CorsHandler corsHandler;
     private final SightingRepo sightingRepo;
+    private final UserService userService;
+    private final Log my_log = new Log("log.txt");
 
-    public SightingEndpoint(CorsHandler corsHandler, SightingRepo sightingRepo) throws IOException {
+    public SightingEndpoint(CorsHandler corsHandler, SightingRepo sightingRepo, UserService userService) throws IOException {
         this.corsHandler = corsHandler;
         this.sightingRepo = sightingRepo;
+        this.userService = userService;
     }
-    Log my_log = new Log("log.txt");
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -39,6 +43,14 @@ public class SightingEndpoint extends AbstractHandler {
 
         if (!"POST".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(405);
+            return;
+        }
+
+        // validate user
+        // TODO use correct header
+        if (!this.validateUser(request.getHeader("which header??"))) {
+            // TODO which status to send?
+            response.setStatus(418);
             return;
         }
 
@@ -99,8 +111,20 @@ public class SightingEndpoint extends AbstractHandler {
         } else {
             my_log.logger.warning("something is wrong");
         }
+    }
 
+    private boolean validateUser(String header) {
+        // TODO quick check before doing a database query
 
+        // TODO decode http header
+        String decoded = new String(Base64.getDecoder().decode("SGFsbG86TWFyc2ls"));
+
+        // TODO more magic regarding the http header
+
+        String user = "foo";
+        String password = "bar";
+
+        return this.userService.validateUser(user, password);
     }
 
 }

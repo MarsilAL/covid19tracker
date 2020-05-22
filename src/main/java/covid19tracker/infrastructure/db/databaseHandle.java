@@ -6,11 +6,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class databaseHandle {
+public class DatabaseHandle {
     String dbTable = System.getenv("DB_TABLE");
     private final Connection connection;
 
-    public databaseHandle(Connection connection) {
+    public DatabaseHandle(Connection connection) {
         this.connection = connection;
     }
 
@@ -60,4 +60,13 @@ public class databaseHandle {
         }
         return true;
     }
+
+    public boolean userValid(String usernamen, String password) {
+        // TODO implement me
+
+        // is there a user with that combination?
+
+        return false;
+    }
+
 }

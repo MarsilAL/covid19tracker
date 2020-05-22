@@ -1,12 +1,12 @@
 package covid19tracker.business;
 
 import covid19tracker.domain.User;
-import covid19tracker.infrastructure.db.databaseHandle;
+import covid19tracker.infrastructure.db.DatabaseHandle;
 
-public class RegisterService {
-    final private databaseHandle databaseHandle;
+public class UserService {
+    private final DatabaseHandle databaseHandle;
 
-    public RegisterService(databaseHandle databaseHandle) {
+    public UserService(DatabaseHandle databaseHandle) {
         this.databaseHandle = databaseHandle;
     }
 
@@ -21,6 +21,10 @@ public class RegisterService {
         }
         return new User(username, hasCovid, latitude, longitude, pswC);
 
+    }
+
+    public boolean validateUser(String username, String password) {
+        return databaseHandle.userValid(username, password);
     }
 }
 
