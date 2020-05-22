@@ -1,7 +1,7 @@
 package covid19tracker.infrastructure.web;
 
 
-import covid19tracker.business.RegisterService;
+import covid19tracker.business.UserService;
 import covid19tracker.infrastructure.db.SightingRepo;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -11,13 +11,13 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 public class Webserver {
 
 
-    private final RegisterService registerService;
+    private final UserService userService;
     private final CorsHandler corsHandler;
     private final SightingRepo sightingRepo;
 
-    public Webserver(RegisterService registerService, CorsHandler corsHandler, SightingRepo sightingRepo) {
+    public Webserver(UserService userService, CorsHandler corsHandler, SightingRepo sightingRepo) {
 
-        this.registerService = registerService;
+        this.userService = userService;
         this.corsHandler = corsHandler;
         this.sightingRepo = sightingRepo;
     }
@@ -32,7 +32,7 @@ public class Webserver {
         sighting.setAllowNullPathInfo(true);
 
         health.setHandler(new covid19tracker.infrastructure.web.HealthEndpoint());
-        register.setHandler(new covid19tracker.infrastructure.web.RegisterEndpoint(registerService, corsHandler));
+        register.setHandler(new covid19tracker.infrastructure.web.RegisterEndpoint(userService, corsHandler));
 
         sighting.setHandler(new covid19tracker.infrastructure.web.SightingEndpoint(corsHandler, sightingRepo));
 

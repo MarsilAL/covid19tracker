@@ -1,13 +1,12 @@
 package covid19tracker.infrastructure.web;
 
 import covid19tracker.Log;
-import covid19tracker.business.RegisterService;
+import covid19tracker.business.UserService;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -17,11 +16,11 @@ import covid19tracker.domain.User;
 
 public class RegisterEndpoint extends AbstractHandler {
 
-    final private RegisterService registerService;
+    final private UserService userService;
     final private CorsHandler corsHandler;
 
-    public RegisterEndpoint(RegisterService registerService, CorsHandler corsHandler) {
-        this.registerService = registerService;
+    public RegisterEndpoint(UserService userService, CorsHandler corsHandler) {
+        this.userService = userService;
         this.corsHandler = corsHandler;
     }
 
@@ -85,7 +84,7 @@ public class RegisterEndpoint extends AbstractHandler {
             return;
         }
 
-        User user = registerService.registerUser(username, hasCovid, latitude, longitude, pswC);
+        User user = userService.registerUser(username, hasCovid, latitude, longitude, pswC);
 
         // creation suceess!! tell the caller about the created user as json
         if (user != null) {
@@ -109,11 +108,4 @@ public class RegisterEndpoint extends AbstractHandler {
 
 
     }
-    /*
-    private IrgendeinUserObject deserializeUser()
-
-    private JSONObject serialiyeUser(User user) {
-        return null // TODO
-    }
-    */
 }
